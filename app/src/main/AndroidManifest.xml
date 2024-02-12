@@ -12,15 +12,38 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MoneyKitExample"
         tools:targetApi="31">
+        <!--
+        singleTask launch mode is not a requirement, but means that when an OAuth flow launches
+        another app, your MainActivity instance which initiated the flow will be the same instance
+        that is used to handle the redirect back to your app at the end of the OAuth flow, which
+        means you won't need to re-initialize your LinkSessionHandler as it will still be in memory
+        -->
         <activity
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"
-            android:theme="@style/Theme.MoneyKitExample">
+            android:theme="@style/Theme.MoneyKitExample"
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter>
+                <!--
+                This intent filter should be configured to allow your app to be opened by another
+                app redirecting at the end of an OAuth flow, and should be specified as your
+                redirect url when configuring your MoneyKit link session, e.g.
+                redirect_uri: "mymoneyapp://com.moneykit.moneykitexample"
+                -->
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="your oauth host, e.g. com.moneykit.moneykitexample"
+                    android:scheme="your oauth scheme, e.g. mymoneyapp" />
             </intent-filter>
         </activity>
     </application>

@@ -15,7 +15,7 @@ Android app.
 Add the following line to your app's build.gradle file:
 
 ```kotlin
-implementation("com.moneykit:connect:0.0.6")
+implementation("com.moneykit:connect:0.0.7")
 ```
 
 ## Documentation
@@ -70,7 +70,7 @@ val linkHandler = MkLinkHandler(configuration)
 ### Open MoneyKit Connect
 
 Finally, open Link by calling `presentLinkFlow(context)` on the Handler object.
-This will usually be done in a button’s target action. Context should be your current activity.
+This will usually be done in a button’s click handler. Context should be your current activity.
 
 ```kotlin
 linkHandler.presentLinkFlow(this)

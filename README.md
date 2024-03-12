@@ -15,7 +15,7 @@ Android app.
 Add the following line to your app's build.gradle file:
 
 ```kotlin
-implementation("com.moneykit:connect:0.0.7")
+implementation("com.moneykit:connect:0.0.8")
 ```
 
 ## Documentation
@@ -51,7 +51,11 @@ val configuration = MkConfiguration(
             }
         }
     },
-    onExit = {
+    onExit = { error ->
+        if (error != null) {
+            Timber.e(error.displayedMessage)
+        }
+        
         Timber.i("Exited Link")
     },
 )

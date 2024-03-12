@@ -75,17 +75,18 @@ class MainActivity : Activity() {
                     }
                 }
             },
-            onExit = {
-                // Handle MoneyKit being exited
+            onExit = { error ->
+                if (error != null) {
+                    // Optional, log errors for your own tracing
+                    Timber.e(error.displayedMessage)
+                }
+
+                // Handle MoneyKit being exited, if you need to reset UI etc.
             },
             onEvent = { event ->
                 // Optional, log events for your own tracing
                 Timber.i(event.name)
             },
-            onError = { error ->
-                // Optional, log errors for your own tracing
-                Timber.e(error.displayedMessage)
-            }
         )
 
         return MkLinkHandler(configuration).also { linkHandler = it }

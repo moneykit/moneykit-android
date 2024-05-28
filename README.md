@@ -15,7 +15,7 @@ Android app.
 Add the following line to your app's build.gradle file:
 
 ```kotlin
-implementation("com.moneykit:connect:0.0.8")
+implementation("com.moneykit:connect:0.1.0")
 ```
 
 ## Documentation

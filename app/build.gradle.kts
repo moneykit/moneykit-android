@@ -44,7 +44,7 @@ android {
 }
 
 dependencies {
-    implementation("com.moneykit:connect:0.0.8")
+    implementation("com.moneykit:connect:0.1.0")
     implementation("com.jakewharton.timber:timber:5.0.1")
 
     implementation("androidx.core:core-ktx:1.12.0")

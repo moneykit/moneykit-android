@@ -7,7 +7,7 @@ Android app. The SDK handles connecting to a financial institution in your app (
 validation, multi-factor authentication, error handling, etc.) without passing sensitive information
 to your server.
 
-This project provides a basic example of how to integrate the MoneyKit Connect Android SDK into an 
+This project provides a basic example of how to integrate the MoneyKit Connect Android SDK into an
 Android app.
 
 ## Installation
@@ -15,7 +15,7 @@ Android app.
 Add the following line to your app's build.gradle file:
 
 ```kotlin
-implementation("com.moneykit:connect:0.1.0")
+implementation("com.moneykit:connect:0.3.1")
 ```
 
 ## Documentation
@@ -55,7 +55,7 @@ val configuration = MkConfiguration(
         if (error != null) {
             Timber.e(error.displayedMessage)
         }
-        
+
         Timber.i("Exited Link")
     },
 )

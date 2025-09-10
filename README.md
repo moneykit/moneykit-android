@@ -14,9 +14,36 @@ Android app.
 
 Add the following line to your app's build.gradle file:
 
-```kotlin
-implementation("com.moneykit:connect:0.3.1")
-```
+**Legacy Dependency Declaration**
+```kotlin   
+implementation("com.moneykit:connect:0.4.2")  
+```  
+
+
+
+### OR
+
+
+
+**New Gradle Version Catalog Declaration**
+
+For more information: https://developer.android.com/build/migrate-to-catalogs
+
+Add these entries to `gradle/libs.versions.toml`:
+
+```toml  
+[versions]  
+moneykitConnect = "0.4.2"  
+  
+[libraries]  
+moneykit-connect = { group = "com.moneykit", name = "connect", version.ref = "moneykitConnect" }  
+```  
+
+Then use the alias in `app/build.gradle.kts`:
+```  
+```kotlin  
+implementation(libs.moneykit.connect)  
+```  
 
 ## Documentation
 
@@ -36,7 +63,7 @@ Connect, you will need to get a new `link_session_token` from your server and cr
 `MkConfiguration` with it.
 
 ```kotlin
-val linkSessionToken: String = "your_link_session_token"
+val linkSessionToken = "your_link_session_token"
 
 val configuration = MkConfiguration(
     sessionToken = linkSession.linkSessionToken,

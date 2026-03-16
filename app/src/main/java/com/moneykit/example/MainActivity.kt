@@ -4,11 +4,11 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import timber.log.Timber
 import androidx.core.content.edit
 import com.moneykit.connect.MkConfiguration
 import com.moneykit.connect.MkLinkHandler
 import com.moneykit.connect.entities.MkLinkSuccessType
-import timber.log.Timber
 
 private const val LINK_SESSION_TOKEN_PREF_KEY = "link_session_token"
 
@@ -29,6 +29,13 @@ class MainActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // Initialize Timber for debug logging
+        if (Timber.treeCount == 0) {
+            Timber.plant(Timber.DebugTree())
+        }
+
+        Timber.i("onCreate called with intent: ${intent?.data}")
+        
         if (handleOauthRedirectIntent(intent)) {
             // If the app has been launched with an intent which is resuming an oauth flow,
             // it should be handled with linkHandler.continueFlow as shown in
@@ -37,15 +44,19 @@ class MainActivity : Activity() {
         }
 
         // todo Create a link session via the MoneyKit API and pass it to your Android app here
-        val linkSessionToken = "YOUR_LINK_SESSION_TOKEN"
+        val linkSessionToken = ""
+        
         // Persist your link session token
         this.linkSessionToken = linkSessionToken
 
-        // Initialise the link handler
-        initialiseLinkHandler(linkSessionToken)
-            // Open the MoneyKit UI to begin the link flow. You must pass Activity context
-            // here so that the UI can start.
-            .presentLinkFlow(this)
+        // Initialize the link handler
+        val handler = initialiseLinkHandler(linkSessionToken)
+        Timber.i("About to present link flow")
+        
+        // Open the MoneyKit UI to begin the link flow. You must pass Activity context
+        // here so that the UI can start.
+        handler.presentLinkFlow(this)
+        Timber.i("presentLinkFlow called successfully")
     }
 
     /**
@@ -54,38 +65,39 @@ class MainActivity : Activity() {
      */
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-
         handleOauthRedirectIntent(intent)
     }
 
     private fun initialiseLinkHandler(linkSessionToken: String): MkLinkHandler {
+        Timber.i("Initializing link handler with token: ${linkSessionToken.take(50)}...")
+        
         val configuration = MkConfiguration(
             sessionToken = linkSessionToken,
             onSuccess = { successType ->
+                Timber.i("onSuccess called with successType: $successType")
                 when (successType) {
                     is MkLinkSuccessType.Linked -> {
-                        // Handle successful link - pass successType.institution.token to your
-                        // server to be exchanged for a link token
-                        Timber.i("Successful link")
+                        Timber.i("Linked - Id: ${successType.institution.linkId}; Token to exchange: ${successType.institution.token.value}")
+                        // Clear the stored token now that the link is complete
+                        this.linkSessionToken = null
+                        // NOTE: Stopping here as requested - not doing token exchange
                     }
 
                     is MkLinkSuccessType.Relinked -> {
-                        // Handle successful relink
-                        Timber.i("Successful relink")
+                        Timber.i("Relinked - Id: ${successType.institution.linkId}")
                     }
                 }
             },
             onExit = { error ->
+                Timber.i("onExit called with error: $error")
                 if (error != null) {
-                    // Optional, log errors for your own tracing
-                    Timber.e(error.displayedMessage)
+                    Timber.e("Exit error: ${error.displayedMessage}")
+                } else {
+                    Timber.i("MoneyKit exited without error")
                 }
-
-                // Handle MoneyKit being exited, if you need to reset UI etc.
             },
             onEvent = { event ->
-                // Optional, log events for your own tracing
-                Timber.i(event.name)
+                Timber.i("Event received: ${event.name}")
             },
         )
 
@@ -94,6 +106,7 @@ class MainActivity : Activity() {
 
     private fun handleOauthRedirectIntent(intent: Intent?): Boolean {
         val uri = intent?.data ?: return false
+        Timber.i("Handling OAuth redirect URI: $uri")
 
         // If your app started a Bank Oauth flow and is still running in the background after
         // returning from the Bank, the linkHandler instance will still exist in memory and you
@@ -103,7 +116,9 @@ class MainActivity : Activity() {
             ?: linkSessionToken?.let { initialiseLinkHandler(it) }
             ?: return false
 
+        Timber.i("About to call continueFlow with URI: $uri")
         linkHandler.continueFlow(this, uri)
+        Timber.i("continueFlow called successfully")
         return true
     }
 }

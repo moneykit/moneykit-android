@@ -42,8 +42,13 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
+                    android:host="oauth"
+                    android:scheme="moneykitexampleapp" />
+                    <!-- 
+                    Original template values were:
                     android:host="your oauth host, e.g. com.moneykit.moneykitexample"
-                    android:scheme="your oauth scheme, e.g. mymoneyapp" />
+                    android:scheme="your oauth scheme, e.g. mymoneyapp"
+                    -->
             </intent-filter>
         </activity>
     </application>

@@ -34,7 +34,7 @@
                 This intent filter should be configured to allow your app to be opened by another
                 app redirecting at the end of an OAuth flow, and should be specified as your
                 redirect url when configuring your MoneyKit link session, e.g.
-                redirect_uri: "mymoneyapp://com.moneykit.moneykitexample"
+                redirect_uri: "moneykitexampleapp://oauth"
                 -->
                 <action android:name="android.intent.action.VIEW" />
 
@@ -44,11 +44,6 @@
                 <data
                     android:host="oauth"
                     android:scheme="moneykitexampleapp" />
-                    <!-- 
-                    Original template values were:
-                    android:host="your oauth host, e.g. com.moneykit.moneykitexample"
-                    android:scheme="your oauth scheme, e.g. mymoneyapp"
-                    -->
             </intent-filter>
         </activity>
     </application>

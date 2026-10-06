@@ -29,6 +29,11 @@ class MainActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // Log to Logcat in debug builds only
+        if (BuildConfig.DEBUG && Timber.treeCount == 0) {
+            Timber.plant(Timber.DebugTree())
+        }
+
         if (handleOauthRedirectIntent(intent)) {
             // If the app has been launched with an intent which is resuming an oauth flow,
             // it should be handled with linkHandler.continueFlow as shown in
@@ -66,12 +71,15 @@ class MainActivity : Activity() {
                     is MkLinkSuccessType.Linked -> {
                         // Handle successful link - pass successType.institution.token to your
                         // server to be exchanged for a link token
-                        Timber.i("Successful link")
+                        Timber.i("Successful link: ${successType.institution.linkId}")
+
+                        // The link session is complete, so the persisted token is no longer needed
+                        this.linkSessionToken = null
                     }
 
                     is MkLinkSuccessType.Relinked -> {
                         // Handle successful relink
-                        Timber.i("Successful relink")
+                        Timber.i("Successful relink: ${successType.institution.linkId}")
                     }
                 }
             },
@@ -82,6 +90,7 @@ class MainActivity : Activity() {
                 }
 
                 // Handle MoneyKit being exited, if you need to reset UI etc.
+                Timber.i("Link flow exited")
             },
             onEvent = { event ->
                 // Optional, log events for your own tracing
@@ -103,6 +112,7 @@ class MainActivity : Activity() {
             ?: linkSessionToken?.let { initialiseLinkHandler(it) }
             ?: return false
 
+        Timber.i("Continuing link flow from oauth redirect")
         linkHandler.continueFlow(this, uri)
         return true
     }
